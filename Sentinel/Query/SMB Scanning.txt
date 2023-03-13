@@ -1,0 +1,11 @@
+let timeRange = ago(30d);
+let lastseen = ago(7d);
+//The following source-hostname has tried to contact more than 100 other addresses in the last 5 minutes on SMB (tcp/445).
+DeviceNetworkEvents 
+| where Timestamp > timeRange
+| where RemotePort == "445"
+| summarize numIps=dcount(RemoteIP) by InitiatingProcessFileName ,DeviceName, DeviceId, bin(Timestamp, 5m)
+| where numIps > 100
+| project Timestamp, DeviceName, DeviceId, numIps, InitiatingProcessFileName
+| join kind=inner DeviceInfo on DeviceId
+| where Timestamp1 > lastseen
