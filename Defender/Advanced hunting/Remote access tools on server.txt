@@ -1,0 +1,6 @@
+let rat = externaldata (IPAddress: string) [h'https://raw.githubusercontent.com/forseced/forensics-public/main/Binary%20List/rats.lst'];
+DeviceProcessEvents 
+| where FileName  in (rat)
+| join kind=inner DeviceInfo on DeviceId
+| where DeviceType == "Server"
+| distinct DeviceName, FileName

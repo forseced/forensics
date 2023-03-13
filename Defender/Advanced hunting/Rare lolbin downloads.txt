@@ -1,0 +1,18 @@
+//bin from https://lolbas-project.github.io/#
+//add more as needed
+let lolbin = dynamic(["AppInstaller.exe", "Bitsadmin.exe",
+ "CertOC.exe", "CertReq.exe", "Certutil.exe", "cmd.exe", 
+ "cmdl32.exe", "ConfigSecurityPolicy.exe", "Desktopimgdownldr.exe", 
+ "Diantz.exe", "Esentutl.exe",  "Extrac32.exe", "Findstr.exe", 
+ "Finger.exe", "Hh.exe", "IMEWDBLD.exe", "Ieexec.exe", 
+ "Installutil.exe", "Ldifde.exe", "Makecab.exe", "MpCmdRun.exe", 
+ "Mshta.exe", "OneDriveStandaloneUpdater.exe", "Presentationhost.exe", 
+ "PrintBrm.exe", "Replace.exe", "Xwizard.exe", "GfxDownloadWrapper.exe", 
+ "MsoHtmEd.exe", "Mspub.exe", "Powerpnt.exe", "ProtocolHandler.exe", 
+ "Squirrel.exe", "Update.exe", "Wsl.exe"]);
+DeviceNetworkEvents 
+| where RemoteIPType == "Public"
+| where InitiatingProcessFileName != "MicrosoftEdgeCP.exe"
+| where InitiatingProcessFileName in (lolbin)
+| summarize Count=count(DeviceName), makeset(DeviceName), makeset(InitiatingProcessFileName) by RemoteUrl
+| where 3 > Count

@@ -1,0 +1,9 @@
+//change time as needed
+let hours_back = 24h;
+AlertInfo 
+| where Timestamp >= ago(30d)
+| extend compare=iff(Timestamp <= ago(hours_back), Title, "") 
+| summarize make_set(compare), make_set(Title)
+| project set_difference(set_Title, set_compare)
+| mv-expand Column1
+| project-rename Nye_Security_Alerts_siste_30_days = Column1

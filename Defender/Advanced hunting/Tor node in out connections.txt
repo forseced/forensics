@@ -1,0 +1,4 @@
+let tor_node_ioc = externaldata (IPAddress: string) [h'https://raw.githubusercontent.com/SecOps-Institute/Tor-IP-Addresses/master/tor-nodes.lst'];
+DeviceNetworkEvents
+| where RemoteIP in (tor_node_ioc)
+
