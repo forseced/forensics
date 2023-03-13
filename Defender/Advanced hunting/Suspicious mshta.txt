@@ -1,0 +1,5 @@
+//This alert triggers on suspicious mshta.exe techniques being executed on the host
+let mshta=dynamic(["script:", "http:", "https:"]);
+DeviceProcessEvents
+| where FileName =~ "mshta.exe"
+| where ProcessCommandLine has_any (mshta)

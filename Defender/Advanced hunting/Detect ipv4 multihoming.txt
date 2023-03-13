@@ -1,0 +1,12 @@
+DeviceNetworkInfo
+| where Timestamp < ago(10m)
+| where NetworkAdapterStatus == "Up"
+| where NetworkAdapterType == "Ethernet"
+| mvexpand parse_json(IPAddresses)
+| extend IPAddress=IPAddresses.IPAddress
+| extend IPAddress= parse_ipv4(tostring(IPAddress))
+| extend ipv4 = format_ipv4(IPAddress)
+| where ipv4 !hasprefix "169.254."
+| where isnotempty(ipv4)
+| summarize dcount(ipv4), make_set(ipv4) by DeviceId, DeviceName, Timestamp
+| where dcount_ipv4 > 1
