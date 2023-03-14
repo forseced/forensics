@@ -1,0 +1,13 @@
+// Find new startup applications
+DeviceRegistryEvents
+| where RegistryKey has "Run" or RegistryKey has "RunOnce"
+| where ActionType == "RegistryValueSet"
+| summarize by DeviceId, RegistryKey, RegistryValueName, RegistryValueData
+| join kind=inner (
+    DeviceRegistryEvents
+    | where RegistryKey has "Run" or RegistryKey has "RunOnce"
+    | where ActionType == "RegistryValueSet"
+    | summarize min(Timestamp) by DeviceId, RegistryKey, RegistryValueName
+) on DeviceId, RegistryKey, RegistryValueName
+| project Timestamp=min_Timestamp, DeviceId, RegistryKey, RegistryValueName, RegistryValueData
+| order by Timestamp desc
