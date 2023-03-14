@@ -1,13 +1,16 @@
+//Can be device name for one device or * for all
+let Device_to_check="*";
 // Find new startup applications
 DeviceRegistryEvents
 | where RegistryKey has "Run" or RegistryKey has "RunOnce"
 | where ActionType == "RegistryValueSet"
-| summarize by DeviceId, RegistryKey, RegistryValueName, RegistryValueData
+| summarize by DeviceId, DeviceName, RegistryKey, RegistryValueName, RegistryValueData
 | join kind=inner (
     DeviceRegistryEvents
     | where RegistryKey has "Run" or RegistryKey has "RunOnce"
     | where ActionType == "RegistryValueSet"
     | summarize min(Timestamp) by DeviceId, RegistryKey, RegistryValueName
 ) on DeviceId, RegistryKey, RegistryValueName
-| project Timestamp=min_Timestamp, DeviceId, RegistryKey, RegistryValueName, RegistryValueData
+| project Timestamp=min_Timestamp, DeviceId, DeviceName, RegistryKey, RegistryValueName, RegistryValueData
 | order by Timestamp desc
+| search DeviceName:Device_to_check
