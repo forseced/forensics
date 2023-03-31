@@ -1,0 +1,5 @@
+let domains = externaldata (Domains: string) [h'https://raw.githubusercontent.com/forseced/forensics-public/main/Defender/3cx-ioc/domains.txt'];
+DeviceNetworkEvents
+| where Timestamp > ago(1d)
+| where RemoteUrl in (domains)
+| summarize count() by DeviceName
